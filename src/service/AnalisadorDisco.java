@@ -2,6 +2,7 @@ package service;
 
 import model.ArquivoInfo;
 import model.EstatisticaCategoria;
+import model.ResultadoAnalise;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,14 +16,13 @@ import java.util.stream.Stream;
 
 public class AnalisadorDisco {
 
-    public List<ArquivoInfo> analisar (String caminho) {
+    public ResultadoAnalise analisar(String caminho) {
         List<ArquivoInfo> arquivos = new ArrayList<>();
         Map<String, EstatisticaCategoria> estatisticas = new HashMap<>();
 
         Path pasta = Paths.get(caminho);
 
         try (Stream<Path> caminhos = Files.walk(pasta)) {
-
             caminhos
                     .filter(Files::isRegularFile)
                     .forEach(arquivo -> {
@@ -33,58 +33,44 @@ public class AnalisadorDisco {
 
                             String categoria = descobrirCategoria(nome);
                             estatisticas.putIfAbsent(categoria, new EstatisticaCategoria());
-                            estatisticas.get(categoria)
-                                    .adicionarArquivo(tamanho);
+                            estatisticas.get(categoria).adicionarArquivo(tamanho);
 
-                            ArquivoInfo info =  new ArquivoInfo(nome, caminhoCompleto, tamanho);
-
-                            arquivos.add(info);
+                            arquivos.add(new ArquivoInfo(nome, caminhoCompleto, tamanho));
 
                         } catch (IOException e) {
-                            System.out.println("Erro ao ler arquivo: " + e.getMessage());
+                            System.err.println("Erro ao ler arquivo: " + e.getMessage());
                         }
                     });
         } catch (IOException e) {
-            System.out.println("Erro ao ler pasta: " + e.getMessage());
+            System.err.println("Erro ao ler pasta: " + e.getMessage());
         }
 
-        for (Map.Entry<String, EstatisticaCategoria> entry : estatisticas.entrySet()){
-
-            String categoria = entry.getKey();
-            EstatisticaCategoria info = entry.getValue();
-
-            System.out.println("Categoria: " + categoria);
-            System.out.println("Quantidade: " + info.getQuantidadeArquivos());
-            System.out.println("Tamanho total: " + info.getTamanhoTotal() + " bytes");
-        }
-
-        return arquivos;
+        return new ResultadoAnalise(arquivos, estatisticas);
     }
+
     private String descobrirCategoria(String nomeArquivo) {
-        String nome =  nomeArquivo.toLowerCase();
+        String nome = nomeArquivo.toLowerCase();
 
         if (nome.endsWith(".jpg") ||
-            nome.endsWith(".jpeg") ||
-            nome.endsWith(".png") ||
-            nome.endsWith(".gif")) {
-
+                nome.endsWith(".jpeg") ||
+                nome.endsWith(".png") ||
+                nome.endsWith(".gif")) {
             return "Imagens";
         }
 
         if (nome.endsWith(".mp4") ||
-            nome.endsWith(".avi") ||
-            nome.endsWith(".mkv")) {
-
+                nome.endsWith(".avi") ||
+                nome.endsWith(".mkv")) {
             return "Videos";
         }
 
         if (nome.endsWith(".pdf") ||
-            nome.endsWith(".doc") ||
-            nome.endsWith(".docx") ||
-            nome.endsWith(".txt")) {
-
+                nome.endsWith(".doc") ||
+                nome.endsWith(".docx") ||
+                nome.endsWith(".txt")) {
             return "Documentos";
         }
+
         return "Outros";
     }
 }

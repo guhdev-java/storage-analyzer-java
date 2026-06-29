@@ -1,20 +1,19 @@
 package model;
 
 public class EstatisticaCategoria {
-
     private int quantidadeArquivos;
     private long tamanhoTotal;
 
-    public void adicionarArquivo(long tamanho){
+    public void adicionarArquivo(long tamanho) {
         quantidadeArquivos++;
-        tamanhoTotal += tamanho;
+        tamanhoTotal = tamanho;
     }
 
-    public int getQuantidadeArquivos(){
+    public int getQuantidadeArquivos() {
         return quantidadeArquivos;
     }
 
-    public long getTamanhoTotal(){
+    public long getTamanhoTotal() {
         return tamanhoTotal;
     }
 }

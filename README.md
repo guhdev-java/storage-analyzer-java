@@ -15,10 +15,10 @@ Compile e execute com o JDK 26+:
 
 ```bash
 # Compilar
-javac -d out src/Main.java src/model/*.java src/service/*.java src/util/*.java
+javac -d out src/app.Main.java src/model/*.java src/service/*.java src/util/*.java
 
 # Executar
-java -cp out Main
+java -cp out app.Main
 ```
 
 O programa solicitará o caminho de uma pasta ou arquivo para análise.
@@ -53,7 +53,7 @@ foto.jpg - 12.50 MB
 
 ```
 src/
-├── Main.java                     # Ponto de entrada
+├── app.Main.java                     # Ponto de entrada
 ├── model/
 │   ├── ArquivoInfo.java          # Dados de um arquivo (nome, caminho, tamanho)
 │   └── EstatisticaCategoria.java # Acumulador de estatísticas por categoria
