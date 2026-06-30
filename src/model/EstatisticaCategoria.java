@@ -9,6 +9,11 @@ public class EstatisticaCategoria {
         tamanhoTotal = tamanho;
     }
 
+    public void removerArquivo(long tamanho) {
+        quantidadeArquivos--;
+        tamanhoTotal -= tamanho;
+    }
+
     public int getQuantidadeArquivos() {
         return quantidadeArquivos;
     }
