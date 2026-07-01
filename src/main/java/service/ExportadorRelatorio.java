@@ -5,7 +5,6 @@ import model.ArquivoInfo;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.function.Function;
@@ -13,7 +12,7 @@ import java.util.function.Function;
 public class ExportadorRelatorio {
 
     public void exportarCsv(List<ArquivoInfo> arquivos, String caminhoSaida,
-                            Function<String, String> categorizador) throws IOException {
+                            Function<ArquivoInfo, String> categorizador) throws IOException {
         StringBuilder sb = new StringBuilder();
         sb.append("nome,caminho,tamanho_bytes,categoria\n");
 
@@ -21,15 +20,15 @@ public class ExportadorRelatorio {
             sb.append(escaparCsv(a.getNome())).append(",")
                     .append(escaparCsv(a.getCaminho())).append(",")
                     .append(a.getTamanho()).append(",")
-                    .append(escaparCsv(categorizador.apply(a.getNome())))
+                    .append(escaparCsv(categorizador.apply(a)))
                     .append("\n");
         }
 
-        escrever(caminhoSaida, sb.toString());
+        Files.writeString(Paths.get(caminhoSaida), sb.toString(), StandardCharsets.UTF_8);
     }
 
     public void exportarJson(List<ArquivoInfo> arquivos, String caminhoSaida,
-                             Function<String, String> categorizador) throws IOException {
+                             Function<ArquivoInfo, String> categorizador) throws IOException {
         StringBuilder sb = new StringBuilder();
         sb.append("[\n");
 
@@ -39,18 +38,12 @@ public class ExportadorRelatorio {
                     .append("        \"nome\": \"").append(escaparJson(a.getNome())).append("\",\n")
                     .append("        \"caminho\": \"").append(escaparJson(a.getCaminho())).append("\",\n")
                     .append("        \"tamanho\": ").append(a.getTamanho()).append(",\n")
-                    .append("        \"categoria\": \"").append(escaparJson(categorizador.apply(a.getNome()))).append("\"\n")
-                    .append("    }");
-            sb.append(i < arquivos.size() - 1 ? ",\n" : "\n");
+                    .append("        \"categoria\": \"").append(escaparJson(categorizador.apply(a))).append("\"\n")
+                    .append("    }").append(i < arquivos.size() - 1 ? "," : "").append("\n");
         }
 
         sb.append("]\n");
-        escrever(caminhoSaida, sb.toString());
-    }
-
-    private void escrever(String caminhoSaida, String conteudo) throws IOException {
-        Path destino = Paths.get(caminhoSaida);
-        Files.writeString(destino, conteudo, StandardCharsets.UTF_8);
+        Files.writeString(Paths.get(caminhoSaida), sb.toString(), StandardCharsets.UTF_8);
     }
 
     private String escaparCsv(String valor) {

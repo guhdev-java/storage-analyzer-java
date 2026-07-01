@@ -1,68 +1,68 @@
-# Storage Analyzer
+# Storage Cleaner & Analyzer
 
-Analisador de armazenamento em disco via linha de comando. Escrito em Java puro, sem dependências externas.
+Ferramenta CLI em **Java 21** para analisar, categorizar e limpar arquivos no disco. Zero dependências externas.
 
 ## Funcionalidades
 
-- Varre recursivamente um diretório e lista todos os arquivos ordenados por tamanho (maiores primeiro)
-- Classifica arquivos por categoria: **Imagens**, **Videos**, **Documentos** e **Outros**
-- Exibe estatísticas agregadas por categoria (quantidade de arquivos e tamanho total)
-- Formata tamanhos em B, KB, MB e GB legíveis
+- **Varredura recursiva** de diretórios com barra de progresso
+- **Classificação** em 7 categorias: Imagens, Vídeos, Documentos, Áudio, Compactados, Código e Outros
+- **Estatísticas** por categoria (quantidade, tamanho total, percentual)
+- **Filtros** por extensão, nome, tamanho mínimo/máximo e ordenação
+- **Detecção de duplicatas** (rápida por nome+tamanho ou precisa por hash MD5)
+- **Exclusão** por categoria, tamanho mínimo ou seleção filtrada
+- **Exportação** de relatórios em CSV ou JSON
+- **Modo script** não-interativo via argumentos CLI
 
 ## Como usar
 
-Compile e execute com o JDK 26+:
+### Compilar e executar
 
 ```bash
 # Compilar
-javac -d out src/app.Main.java src/model/*.java src/service/*.java src/util/*.java
+mvn clean package
 
-# Executar
-java -cp out app.Main
+# Executar (interativo)
+java -jar target/storage-cleaner.jar
+
+# Executar (modo script)
+java -jar target/storage-cleaner.jar --caminho /home/usuario --categoria IMAGENS --formato json
 ```
 
-O programa solicitará o caminho de uma pasta ou arquivo para análise.
+### Comandos CLI
 
-## Exemplo de saída
+| Argumento | Descrição |
+|-----------|-----------|
+| `--caminho` | Caminho do diretório a analisar |
+| `--categoria` | Filtrar por categoria (IMAGENS, VIDEOS, etc.) |
+| `--formato` | Formato do relatório: `csv` ou `json` |
+| `--ordenar` | Ordenação: `tamanho` ou `nome` |
+
+## Menu interativo
 
 ```
-Digite o caminho da pasta/arquivo: /home/usuario/Downloads
-
-Categoria: Imagens
-Quantidade: 45
-Tamanho total: 125829120 bytes
-Categoria: Videos
-Quantidade: 8
-Tamanho total: 2147483648 bytes
-Categoria: Documentos
-Quantidade: 12
-Tamanho total: 52428800 bytes
-Categoria: Outros
-Quantidade: 230
-Tamanho total: 1073741824 bytes
-
-=== ARQUIVOS ORDENADOS POR TAMANHO ===
-
-video.mp4 - 1.50 GB
-backup.zip - 800.00 MB
-foto.jpg - 12.50 MB
-...
+=== STORAGE CLEANER & ANALYZER ===
+1. Listar arquivos por tamanho
+2. Listar arquivos por categoria
+3. Estatísticas por categoria
+4. Filtros avançados
+5. Detectar duplicatas
+6. Excluir arquivos
+7. Exportar relatório
+0. Sair
 ```
 
-## Estrutura do projeto
+## Estrutura
 
 ```
 src/
-├── app.Main.java                     # Ponto de entrada
-├── model/
-│   ├── ArquivoInfo.java          # Dados de um arquivo (nome, caminho, tamanho)
-│   └── EstatisticaCategoria.java # Acumulador de estatísticas por categoria
-├── service/
-│   └── AnalisadorDisco.java      # Lógica de varredura e classificação
-└── util/
-    └── FormatadorTamanho.java    # Conversão de bytes para formato legível
+├── main/java/
+│   ├── app/       # Entrada e CLI
+│   ├── model/     # Dados do domínio
+│   ├── service/   # Lógica de negócio
+│   └── util/      # Formatadores
+└── test/java/     # Testes unitários (JUnit 5)
 ```
 
 ## Licença
 
-Este projeto é open source sob a licença MIT.
+MIT
